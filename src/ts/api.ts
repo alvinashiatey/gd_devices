@@ -182,8 +182,8 @@ function displayCurrentMonitor(slots: MonitorSlot[]) {
 
   if (monitors.length === 0) {
     const noMonitorMsg = document.createElement("p");
-    noMonitorMsg.textContent =
-      "No monitors are currently available. Reach out to Alvin for assistance.";
+    noMonitorMsg.innerHTML =
+      'No monitors are currently available. Reach out to <a href="mailto:alvin.ashiatey@yale.edu">Alvin</a> for assistance.';
     container.appendChild(noMonitorMsg);
     return;
   }
