@@ -42,34 +42,20 @@ main {
       }
     }
 
-    /* Monitor Table Styles */
-    .monitor-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 2em;
-    }
-
-    .monitor-table th,
-    .monitor-table td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: center;
-    }
-
-    .monitor-table th {
-      background-color: #f4f4f4;
-    }
-
-    .monitor-table tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-
-    .monitor-table tr:hover {
-      background-color: #f1f1f1;
-    }
+    /* Current Monitor Styles */
   }
 
-  @media (max-width: 40em) {
+  #current-monitor-container {
+    padding: 1rem;
+    background-color: #f9f9f9;
+  }
+
+  #current-monitor-container p {
+    font-size: 1.2em;
+    margin: 0.5em 0;
+  }
+
+  @media (max-width: 68em) {
     & {
       max-width: 90vw;
       transform: rotate(0deg);
