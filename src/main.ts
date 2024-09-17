@@ -1,6 +1,6 @@
 import "./scss/index.scss";
-import { fetchAndUpdateDevices } from "./ts/api";
+import { fetchAndUpdateData } from "./ts/api";
 
 window.addEventListener("DOMContentLoaded", function () {
-  fetchAndUpdateDevices();
+  fetchAndUpdateData();
 });

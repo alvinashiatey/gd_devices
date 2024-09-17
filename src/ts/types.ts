@@ -1,12 +1,17 @@
 export interface Device {
   "Device Name": string;
   Status: string;
-  Info?: string; // Optional field
+  Info?: string;
+}
+
+export interface MonitorSlot {
+  "Slots\n ⬇️": string;
+  [day: string]: string | undefined;
 }
 
 export interface SheetData {
   sheetName: string;
-  children: Device[];
+  children: Device[] | MonitorSlot[];
 }
 
 export interface ApiResponse {

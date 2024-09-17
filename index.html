@@ -9,7 +9,7 @@
   <body>
     <main>
       <h1>GD Lab Printers</h1>
-      <div class="printers">
+      <div class="printers" id="device-container">
         <div class="ls img" id="art_gdesign1">
           <img src="/public/images/laser.png" alt="Kyocera Laser printer" />
           <div class="title"><p>Art_GDesign1</p></div>
@@ -26,6 +26,10 @@
           <img src="/public/images/wf2.png" alt="Kyocera Laser printer" />
           <div class="title"><p>Art_GDesignWF2</p></div>
         </div>
+      </div>
+
+      <h2>Current Lab Monitor</h2>
+      <div id="current-monitor-container"></div>
       </div>
     </main>
     <script type="module" src="/src/main.ts"></script>

@@ -24,15 +24,16 @@ main {
     }
 
     .img {
+      height: auto;
+      padding: 1rem;
+      text-align: center;
+
       &.ls {
         width: 16vw;
       }
       &.wf {
         width: 33vw;
       }
-      height: auto;
-      padding: 1rem;
-      text-align: center;
 
       img {
         width: 100%;
@@ -40,9 +41,34 @@ main {
         object-position: bottom;
       }
     }
+
+    /* Monitor Table Styles */
+    .monitor-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2em;
+    }
+
+    .monitor-table th,
+    .monitor-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .monitor-table th {
+      background-color: #f4f4f4;
+    }
+
+    .monitor-table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .monitor-table tr:hover {
+      background-color: #f1f1f1;
+    }
   }
 
-  // Media Query for Mobile Devices
   @media (max-width: 40em) {
     & {
       max-width: 90vw;
