@@ -1,8 +1,15 @@
 main {
-  max-width: 50vw;
+  max-width: 60vw;
   margin: 0 auto;
   text-align: center;
   transform: rotate(-2deg);
+
+  .links {
+    .spin {
+      display: inline-block;
+      animation: spin 2s linear infinite;
+    }
+  }
 
   .printers {
     width: 100%;
@@ -29,7 +36,7 @@ main {
       text-align: center;
 
       &.ls {
-        width: 16vw;
+        width: 20vw;
       }
       &.wf {
         width: 33vw;

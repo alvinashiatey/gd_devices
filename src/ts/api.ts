@@ -1,8 +1,5 @@
-// src/main.ts
-
 import { ApiResponse, Device, MonitorSlot } from "./types";
 
-// Function to fetch JSON data and update the HTML
 async function fetchAndUpdateData() {
   const url =
     "https://script.google.com/macros/s/AKfycbx18giy-YKBJOlwyHE69ee2wM3lk0Qh4QAeJoJh_kaglg_acVlWiLrzehiYJj4Ua8-uiA/exec";
@@ -14,15 +11,13 @@ async function fetchAndUpdateData() {
     }
 
     const data: ApiResponse = await response.json();
-    console.log(data); // For debugging purposes
-    processData(data); // Process and display the data
+    processData(data);
   } catch (error) {
     console.error("Error fetching the JSON data:", error);
     displayGlobalError("Failed to load data.");
   }
 }
 
-// Function to display a global error message
 function displayGlobalError(message: string) {
   const container = document.querySelector("main");
   if (container) {
@@ -33,7 +28,6 @@ function displayGlobalError(message: string) {
   }
 }
 
-// Function to process and display data based on sheet names
 function processData(apiResponse: ApiResponse) {
   apiResponse.data.forEach((sheet) => {
     console.log(sheet.sheetName); // For debugging purposes
@@ -45,7 +39,6 @@ function processData(apiResponse: ApiResponse) {
   });
 }
 
-// Function to display Devices
 function displayDevices(devices: Device[]) {
   const container = document.getElementById("device-container");
   if (!container) {
@@ -93,7 +86,6 @@ function displayDevices(devices: Device[]) {
   });
 }
 
-// Helper function to determine color based on status
 function getStatusColor(status: string): string {
   switch (status.toLowerCase()) {
     case "up":
@@ -107,7 +99,6 @@ function getStatusColor(status: string): string {
   }
 }
 
-// Function to parse time strings like "9:00am" to Date objects
 function parseTime(timeStr: string): Date {
   const now = new Date();
   const [time, modifier] = timeStr
@@ -133,7 +124,6 @@ function parseTime(timeStr: string): Date {
   return parsedTime;
 }
 
-// Function to check if current time is within a slot
 function isCurrentTimeInSlot(slot: string): boolean {
   const [startStr, endStr] = slot.split(" - ").map((s) => s.trim());
   const startTime = parseTime(startStr);
@@ -150,28 +140,24 @@ function displayCurrentMonitor(slots: MonitorSlot[]) {
     console.error("Current Monitor container not found");
     return;
   }
-
-  // Clear any existing content
   container.innerHTML = "";
-
   const now = new Date();
   const currentDay = now
     .toLocaleString("en-US", { weekday: "long" })
     .toUpperCase();
 
-  // Find all slots that include the current time
   const currentSlots = slots.filter((slot) =>
     isCurrentTimeInSlot(slot["Slots\n ⬇️"])
   );
 
   if (currentSlots.length === 0) {
     const noMonitorMsg = document.createElement("p");
-    noMonitorMsg.textContent = "No monitors are currently available.";
+    noMonitorMsg.innerHTML =
+      'No monitors are currently available. Reach out to <a href="mailto:alvin.ashiatey@yale.edu">Alvin</a> for assistance.';
     container.appendChild(noMonitorMsg);
     return;
   }
 
-  // Collect monitors from current slots
   const monitors: string[] = [];
   currentSlots.forEach((slot) => {
     const monitor = slot[currentDay];
@@ -188,7 +174,6 @@ function displayCurrentMonitor(slots: MonitorSlot[]) {
     return;
   }
 
-  // Create a list of current monitors
   const monitorList = document.createElement("div");
   monitors.forEach((monitor) => {
     const listItem = document.createElement("p");
@@ -196,9 +181,7 @@ function displayCurrentMonitor(slots: MonitorSlot[]) {
     monitorList.appendChild(listItem);
   });
 
-  // Append the list to the container
   container.appendChild(monitorList);
 }
 
-// Initialize the fetch when the DOM is fully loaded
 export { fetchAndUpdateData };
