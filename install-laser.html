@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/images/laser.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Instructions for installing the Graphic Design department laser printers on macOS."
+    />
+    <title>Install Laser Printers · Yale Graphic Design</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="wordmark" href="/" aria-label="GD Printers home">
+        <span>Printer guide</span>
+      </a>
+      <a class="back-link" href="/">← Printer status</a>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <h1 id="page-title">Install the laser printers</h1>
+          <p class="lede">
+            Before you start Ccnnect to Yale Secure. You’ll also need your NetID
+            and password when you print.
+          </p>
+        </div>
+        <figure class="hero-printer">
+          <span class="printer-number">01</span>
+          <img
+            src="/images/laser.png"
+            alt="Graphic Design Kyocera laser printer"
+          />
+        </figure>
+      </section>
+
+      <div class="guide-layout">
+        <aside class="guide-aside">
+          <nav aria-label="Guide sections">
+            <a href="#software">01 · Get PaperCut</a>
+            <a href="#printer">02 · Add the printer</a>
+            <a href="#printing">03 · Print & release</a>
+          </nav>
+        </aside>
+
+        <article class="steps">
+          <section id="software" class="step-group">
+            <header class="group-header">
+              <span>01</span>
+              <div>
+                <p>Software</p>
+                <h2>Install PaperCut</h2>
+              </div>
+            </header>
+            <ol class="step-list">
+              <li>
+                <div class="step-number">1</div>
+                <div>
+                  <h3>Download the student installer</h3>
+                  <p>
+                    While connected to Yale Secure, open the
+                    <a
+                      href="https://blueprint.yale.edu/downloads/papercut-software-for-macos"
+                      target="_blank"
+                      rel="noreferrer"
+                      >PaperCut software download page</a
+                    >
+                    and download <strong>Student PaperCut – Mac</strong>.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <div class="step-number">2</div>
+                <div>
+                  <h3>Run the installer</h3>
+                  <p>
+                    Extract the downloaded ZIP folder, then open
+                    <code>printers_student.pkg</code> and complete the
+                    installation.
+                  </p>
+                </div>
+              </li>
+            </ol>
+          </section>
+
+          <section id="printer" class="step-group">
+            <header class="group-header">
+              <span>02</span>
+              <div>
+                <p>macOS settings</p>
+                <h2>Add the laser printer</h2>
+              </div>
+            </header>
+            <div class="note">
+              <strong>Tip</strong> Steps 3–5 reveal macOS’s hidden Advanced
+              printer option.
+            </div>
+            <ol class="step-list" start="3">
+              <li>
+                <div class="step-number">3</div>
+                <div>
+                  <h3>Open Printers & Scanners</h3>
+                  <p>
+                    Open <strong>System Settings → Printers & Scanners</strong>,
+                    then select <strong>Add Printer, Scanner, or Fax…</strong>
+                  </p>
+                </div>
+              </li>
+              <li>
+                <div class="step-number">4</div>
+                <div>
+                  <h3>Customize the toolbar</h3>
+                  <p>
+                    Hold the <kbd>Control</kbd> key while clicking the toolbar
+                    area to the right of the Windows icon, then select
+                    <strong>Customize Toolbar…</strong>
+                  </p>
+                </div>
+              </li>
+              <li class="with-media">
+                <div class="step-number">5</div>
+                <div>
+                  <h3>Add the Advanced control</h3>
+                  <p>
+                    Click and drag <strong>Advanced</strong> into the Add
+                    Printer toolbar next to Windows.
+                  </p>
+                  <figure>
+                    <img
+                      src="/images/install_laser/advance.png"
+                      alt="macOS Customize Toolbar window with the Advanced gear icon highlighted"
+                    />
+                    <figcaption>
+                      Drag the Advanced gear into the toolbar.
+                    </figcaption>
+                  </figure>
+                </div>
+              </li>
+              <li>
+                <div class="step-number">6</div>
+                <div>
+                  <h3>Open Advanced</h3>
+                  <p>
+                    Select <strong>Done</strong>, then click the new
+                    <strong>Advanced</strong> toolbar option. It may take a
+                    moment to load.
+                  </p>
+                </div>
+              </li>
+              <li>
+                <div class="step-number">7</div>
+                <div>
+                  <h3>Enter the printer address</h3>
+                  <p>Use these settings:</p>
+                  <dl class="settings">
+                    <div>
+                      <dt>Type</dt>
+                      <dd>Internet Printing Protocol (ipps)</dd>
+                    </div>
+                    <div>
+                      <dt>Device</dt>
+                      <dd>Another Device</dd>
+                    </div>
+                    <div>
+                      <dt>URL</dt>
+                      <dd>
+                        <button
+                          class="copy-button"
+                          type="button"
+                          data-copy="ipps://paperc-prd-ps4.its.yale.edu:9164/printers/artsch_gdesign_global"
+                        >
+                          <code
+                            >ipps://paperc-prd-ps4.its.yale.edu:9164/printers/artsch_gdesign_global</code
+                          ><span>Copy</span>
+                        </button>
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+              </li>
+              <li>
+                <div class="step-number">8</div>
+                <div>
+                  <h3>Choose the Kyocera driver</h3>
+                  <p>
+                    Give the printer a recognizable name. Under
+                    <strong>Use</strong>, choose
+                    <strong>Select Software…</strong> and select the
+                    <strong>Kyocera 4054</strong> driver.
+                  </p>
+                  <p class="support-link">
+                    Missing the driver?
+                    <a
+                      href="https://www.kyoceradocumentsolutions.co.uk/en/support/downloads.name-L2diL2VuL21mcC9UQVNLQUxGQTQwNTRDSQ==.html#tab=application"
+                      target="_blank"
+                      rel="noreferrer"
+                      >Download it from Kyocera →</a
+                    >
+                  </p>
+                </div>
+              </li>
+              <li>
+                <div class="step-number">9</div>
+                <div>
+                  <h3>Finish the setup</h3>
+                  <p>
+                    Select <strong>Add</strong>. When macOS asks about printer
+                    options, enable <strong>Cassette 3</strong> and
+                    <strong>Cassette 4</strong>, then finish.
+                  </p>
+                </div>
+              </li>
+            </ol>
+          </section>
+
+          <section id="printing" class="step-group final-group">
+            <header class="group-header">
+              <span>03</span>
+              <div>
+                <p>At print time</p>
+                <h2>Send, authenticate, release</h2>
+              </div>
+            </header>
+            <div class="release-flow">
+              <div>
+                <span>1</span>
+                <h3>Send</h3>
+                <p>Print to the newly added printer.</p>
+              </div>
+              <div>
+                <span>2</span>
+                <h3>Sign in</h3>
+                <p>Enter your Yale NetID and password when prompted.</p>
+              </div>
+              <div>
+                <span>3</span>
+                <h3>Release</h3>
+                <p>At the printer, scan your Yale ID and release the job.</p>
+              </div>
+            </div>
+            <div class="troubleshooting">
+              <div>
+                <p class="aside-label">Troubleshooting</p>
+                <h2>Is the job stuck on “Hold”?</h2>
+                <p>
+                  Select the refresh icon at the far right of the print job,
+                  then enter your credentials again.
+                </p>
+              </div>
+              <img
+                src="/images/install_laser/refresh.png"
+                alt="macOS print queue showing the refresh icon for a held print job"
+              />
+            </div>
+          </section>
+        </article>
+      </div>
+    </main>
+
+    <script type="module" src="/src/install-laser.ts"></script>
+  </body>
+</html>
