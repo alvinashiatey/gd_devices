@@ -1,69 +1,76 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/images/laser.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta
-      name="description"
-      content="Printer status and macOS setup tools for Yale Graphic Design students."
-    />
-    <title>GD Printers</title>
-  </head>
 
-  <body>
-    <section class="monitor-section" aria-labelledby="monitor-title">
-      <div class="marquee-track">
-        <h1 id="monitor-title">Current lab monitor</h1>
-        <span aria-hidden="true">—</span>
-        <div id="current-monitor-container" aria-live="polite">
-          <p>Checking availability…</p>
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/images/laser.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Printer status and macOS setup tools for Yale Graphic Design students." />
+  <title>GD Printers</title>
+</head>
+
+<body>
+  <section class="monitor-section" aria-labelledby="monitor-title">
+    <div class="marquee-track">
+      <h1 id="monitor-title">Current lab monitor</h1>
+      <span aria-hidden="true">—</span>
+      <div id="current-monitor-container" aria-live="polite">
+        <p>Checking availability…</p>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section class="home-section" aria-labelledby="setup-title">
+      <header class="section-header">
+        <h2 id="setup-title">Install process</h2>
+      </header>
+      <div class="links">
+        <a href="/install-printers.html">
+          <span>Install all GD printers</span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <a href="/install-laser.html">
+          <span>PaperCut and manual laser setup</span>
+          <span aria-hidden="true">→</span>
+        </a>
       </div>
     </section>
 
-    <main>
-      <section class="home-section" aria-labelledby="setup-title">
-        <header class="section-header">
-          <h2 id="setup-title">Install a printer</h2>
-        </header>
-        <div class="links">
-          <a href="/install-printers.html">
-            <span>Install all GD printers</span>
-            <span aria-hidden="true">→</span>
-          </a>
-          <a href="/install-laser.html">
-            <span>PaperCut and manual laser setup</span>
-            <span aria-hidden="true">→</span>
-          </a>
-        </div>
-      </section>
+    <section class="home-section" aria-labelledby="printers-title">
+      <header class="section-header">
+        <h2 id="printers-title">GD lab printers</h2>
+      </header>
+      <div class="printers" id="device-container">
+        <article class="printer-card ls" id="art_gdesign1">
+          <img src="/images/laser.png" alt="Kyocera laser printer" />
+          <div class="title">
+            <p>Art_GDesign1</p>
+          </div>
+        </article>
+        <article class="printer-card wf" id="art_gdesignwf1">
+          <img src="/images/wf.png" alt="DesignJet wide-format printer" />
+          <div class="title">
+            <p>Art_GDesignWF1</p>
+          </div>
+        </article>
+        <article class="printer-card ls" id="art_gdesign2">
+          <img src="/images/laser2.png" alt="Kyocera laser printer" />
+          <div class="title">
+            <p>Art_GDesign2</p>
+          </div>
+        </article>
+        <article class="printer-card wf" id="art_gdesignwf2">
+          <img src="/images/wf2.png" alt="DesignJet wide-format printer" />
+          <div class="title">
+            <p>Art_GDesignWF2</p>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
 
-      <section class="home-section" aria-labelledby="printers-title">
-        <header class="section-header">
-          <h2 id="printers-title">GD lab printers</h2>
-        </header>
-        <div class="printers" id="device-container">
-          <article class="printer-card ls" id="art_gdesign1">
-            <img src="/images/laser.png" alt="Kyocera laser printer" />
-            <div class="title"><p>Art_GDesign1</p></div>
-          </article>
-          <article class="printer-card wf" id="art_gdesignwf1">
-            <img src="/images/wf.png" alt="DesignJet wide-format printer" />
-            <div class="title"><p>Art_GDesignWF1</p></div>
-          </article>
-          <article class="printer-card ls" id="art_gdesign2">
-            <img src="/images/laser2.png" alt="Kyocera laser printer" />
-            <div class="title"><p>Art_GDesign2</p></div>
-          </article>
-          <article class="printer-card wf" id="art_gdesignwf2">
-            <img src="/images/wf2.png" alt="DesignJet wide-format printer" />
-            <div class="title"><p>Art_GDesignWF2</p></div>
-          </article>
-        </div>
-      </section>
-    </main>
+  <script type="module" src="/src/main.ts"></script>
+</body>
 
-    <script type="module" src="/src/main.ts"></script>
-  </body>
 </html>
