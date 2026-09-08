@@ -60,7 +60,7 @@ function displayDevices(devices: Device[]) {
       if (!statusInfoContainer) {
         statusInfoContainer = document.createElement("div");
         statusInfoContainer.classList.add("status-info");
-        deviceElement.appendChild(statusInfoContainer);
+        deviceElement.append(statusInfoContainer);
       }
 
       // Clear previous content
@@ -69,20 +69,35 @@ function displayDevices(devices: Device[]) {
       // Create and append status element
       const statusElement = document.createElement("p");
       statusElement.classList.add("status");
-      statusElement.textContent = `Status: ${device["Status"]}`;
-      statusInfoContainer.appendChild(statusElement);
+      statusElement.textContent = `Status: ${device["Status"]}${getStatusIndicator(
+        device["Status"],
+      )}`;
+      statusInfoContainer.append(statusElement);
 
       // If there's additional info, create and append it
       if (device.Info) {
         const infoElement = document.createElement("p");
         infoElement.classList.add("info");
         infoElement.textContent = `Info: ${device.Info}`;
-        statusInfoContainer.appendChild(infoElement);
+        statusInfoContainer.append(infoElement);
       }
     } else {
       console.warn(`No HTML element found with ID: ${deviceId}`);
     }
   });
+}
+
+function getStatusIndicator(status: string): string {
+  switch (status.trim().toLowerCase()) {
+    case "up":
+      return " 🟢";
+    case "down":
+      return " 🛑";
+    case "under maintenance":
+      return " ⚠️";
+    default:
+      return "";
+  }
 }
 
 function parseTime(timeStr: string): Date {
