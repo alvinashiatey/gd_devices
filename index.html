@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/public/images/laser.png" />
+    <link rel="icon" type="image/png" href="/images/laser.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
@@ -13,57 +13,57 @@
 
   <body>
     <main>
-      <h2>Current Lab Monitor</h2>
-      <div id="current-monitor-container"></div>
+      <section class="monitor-section" aria-labelledby="monitor-title">
+        <div class="marquee-track">
+          <h1 id="monitor-title">Current lab monitor</h1>
+          <span aria-hidden="true">—</span>
+          <div id="current-monitor-container" aria-live="polite">
+            <p>Checking availability…</p>
+          </div>
+        </div>
+      </section>
 
-      <h2>Useful Links</h2>
-      <div class="links">
-        <div class="install-guide">
-          <a href="/install-printers.html"
-            ><span aria-hidden="true">↗</span> Install all GD printers</a
-          >
+      <section class="home-section" aria-labelledby="setup-title">
+        <header class="section-header">
+          <h2 id="setup-title">Install a printer</h2>
+        </header>
+        <div class="links">
+          <a href="/install-printers.html">
+            <span>Install all GD printers</span>
+            <span aria-hidden="true">→</span>
+          </a>
+          <a href="/install-laser.html">
+            <span>PaperCut and manual laser setup</span>
+            <span aria-hidden="true">→</span>
+          </a>
         </div>
-        <div class="install-guide">
-          <a href="/install-laser.html"
-            ><span aria-hidden="true">↗</span> PaperCut and manual laser setup</a
-          >
-        </div>
-        <div class="drivers" hidden>
-          <a
-            href="http://yaleschoolofart.org/digtech/printers/GraphicDesign.dmg"
-            ><span class="spin">⚙️</span> Printer Drivers</a
-          >
-        </div>
-      </div>
+      </section>
 
-      <h2>GD Lab Printers</h2>
-      <div class="printers" id="device-container">
-        <div class="ls img" id="art_gdesign1">
-          <img src="/public/images/laser.png" alt="Kyocera Laser printer" />
-          <div class="title">
-            <p>Art_GDesign1</p>
-          </div>
+      <section class="home-section" aria-labelledby="printers-title">
+        <header class="section-header">
+          <h2 id="printers-title">GD lab printers</h2>
+        </header>
+        <div class="printers" id="device-container">
+          <article class="printer-card ls" id="art_gdesign1">
+            <img src="/images/laser.png" alt="Kyocera laser printer" />
+            <div class="title"><p>Art_GDesign1</p></div>
+          </article>
+          <article class="printer-card wf" id="art_gdesignwf1">
+            <img src="/images/wf.png" alt="DesignJet wide-format printer" />
+            <div class="title"><p>Art_GDesignWF1</p></div>
+          </article>
+          <article class="printer-card ls" id="art_gdesign2">
+            <img src="/images/laser2.png" alt="Kyocera laser printer" />
+            <div class="title"><p>Art_GDesign2</p></div>
+          </article>
+          <article class="printer-card wf" id="art_gdesignwf2">
+            <img src="/images/wf2.png" alt="DesignJet wide-format printer" />
+            <div class="title"><p>Art_GDesignWF2</p></div>
+          </article>
         </div>
-        <div class="wf img" id="art_gdesignwf1">
-          <img src="/public/images/wf.png" alt="Kyocera Laser printer" />
-          <div class="title">
-            <p>Art_GDesignWF1</p>
-          </div>
-        </div>
-        <div class="ls img" id="art_gdesign2">
-          <img src="/public/images/laser2.png" alt="Kyocera Laser printer" />
-          <div class="title">
-            <p>Art_GDesign2</p>
-          </div>
-        </div>
-        <div class="wf img" id="art_gdesignwf2">
-          <img src="/public/images/wf2.png" alt="Kyocera Laser printer" />
-          <div class="title">
-            <p>Art_GDesignWF2</p>
-          </div>
-        </div>
-      </div>
+      </section>
     </main>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
