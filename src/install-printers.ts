@@ -1,4 +1,6 @@
 import "./scss/install-printers.scss";
+import "./ts/riso-theme";
+import "./ts/paper-stack.ts";
 
 document
   .querySelectorAll<HTMLButtonElement>("[data-copy]")

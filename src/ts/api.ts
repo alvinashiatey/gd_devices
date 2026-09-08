@@ -53,7 +53,7 @@ function displayDevices(devices: Device[]) {
     if (deviceElement) {
       // Create a container for status and info
       let statusInfoContainer = deviceElement.querySelector(
-        ".status-info"
+        ".status-info",
       ) as HTMLElement;
 
       // If the container doesn't exist, create it
@@ -70,7 +70,6 @@ function displayDevices(devices: Device[]) {
       const statusElement = document.createElement("p");
       statusElement.classList.add("status");
       statusElement.textContent = `Status: ${device["Status"]}`;
-      statusElement.style.color = getStatusColor(device["Status"]);
       statusInfoContainer.appendChild(statusElement);
 
       // If there's additional info, create and append it
@@ -84,19 +83,6 @@ function displayDevices(devices: Device[]) {
       console.warn(`No HTML element found with ID: ${deviceId}`);
     }
   });
-}
-
-function getStatusColor(status: string): string {
-  switch (status.toLowerCase()) {
-    case "up":
-      return "green";
-    case "down":
-      return "red";
-    case "under maintenance":
-      return "orange";
-    default:
-      return "black";
-  }
 }
 
 function parseTime(timeStr: string): Date {
@@ -119,7 +105,7 @@ function parseTime(timeStr: string): Date {
     now.getDate(),
     hours,
     minutes,
-    0
+    0,
   );
   return parsedTime;
 }
@@ -147,7 +133,7 @@ function displayCurrentMonitor(slots: MonitorSlot[]) {
     .toUpperCase();
 
   const currentSlots = slots.filter((slot) =>
-    isCurrentTimeInSlot(slot["Slots\n ⬇️"])
+    isCurrentTimeInSlot(slot["Slots\n ⬇️"]),
   );
 
   if (currentSlots.length === 0) {

@@ -1,8 +1,10 @@
 @import "./components/reset.scss";
 @import "./components/typography.scss";
+@import "./components/paper-stack.scss";
 
 :root {
   --page-width: 60rem;
+  --page-background: #f3f3ef;
   --ink: #1c1c1c;
   --muted: #666;
   --line: #d8d8d8;
@@ -11,7 +13,7 @@
 }
 
 body {
-  background: #f3f3ef;
+  background: var(--page-background);
   color: var(--ink);
 }
 
@@ -106,6 +108,12 @@ main {
   margin: 0.5rem 0 0;
 }
 
+.step-list p code {
+  background: var(--soft);
+  border: 1px solid var(--line);
+  color: var(--ink);
+}
+
 .note,
 .support-link {
   border-left: 3px solid var(--ink);
@@ -179,6 +187,20 @@ figcaption {
   font-weight: 700;
   margin-left: auto;
   padding: 0.35rem 0.55rem;
+}
+
+:root[data-riso-ink="Yellow Ink"],
+:root[data-riso-ink="Light Grey"] {
+  .copy-button {
+    background: #000;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+  }
+
+  .copy-button span {
+    background: var(--ink);
+    color: #000;
+  }
 }
 
 .release-flow {

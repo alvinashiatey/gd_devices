@@ -1,5 +1,6 @@
 :root {
   --page-width: 60rem;
+  --page-background: #f3f3ef;
   --ink: #1c1c1c;
   --muted: #666;
   --line: #d8d8d8;
@@ -8,7 +9,7 @@
 }
 
 body {
-  background: #f3f3ef;
+  background: var(--page-background);
   color: var(--ink);
 }
 
@@ -45,7 +46,7 @@ main {
   background: rgb(0 0 0 / 78%);
   border-bottom: 1px solid rgb(255 255 255 / 12%);
   color: limegreen;
-  font-family: "Courier New", Courier, monospace;
+  font-family: Arial, Helvetica, sans-serif;
   inset: 0 0 auto;
   overflow: hidden;
   padding: 0.85rem 0;
@@ -121,29 +122,37 @@ main {
 
 .links {
   display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 
   a {
     align-items: center;
-    border-bottom: 1px solid var(--line);
+    border: 2px dotted var(--ink);
     color: var(--ink);
     display: flex;
     font-weight: 700;
     justify-content: space-between;
-    padding: 1rem 0;
+    min-height: 7rem;
+    padding: 1.25rem;
+    transition:
+      background-color 160ms ease,
+      transform 160ms ease;
   }
 
-  a:first-child {
-    border-top: 1px solid var(--line);
+  a[hidden] {
+    display: none;
   }
 
   a:hover,
   a:focus-visible {
-    color: var(--color-link);
-    padding-left: 0.5rem;
+    background: var(--soft);
+    color: var(--ink);
+    transform: translate(-0.2rem, -0.2rem);
   }
 
   a span:last-child {
     font-size: var(--font-size-lg);
+    margin-left: 1rem;
   }
 }
 
@@ -210,8 +219,13 @@ main {
     padding-top: 2rem;
   }
 
+  .links,
   .printers {
     grid-template-columns: 1fr;
+  }
+
+  .links a {
+    min-height: 5.5rem;
   }
 
   .printer-card img {

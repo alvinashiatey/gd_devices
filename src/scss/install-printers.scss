@@ -1,8 +1,10 @@
 @import "./components/reset.scss";
 @import "./components/typography.scss";
+@import "./components/paper-stack.scss";
 
 :root {
-  --page-width: 48rem;
+  --page-width: 60rem;
+  --page-background: #f3f3ef;
   --ink: #1c1c1c;
   --muted: #666;
   --line: #d8d8d8;
@@ -11,7 +13,7 @@
 }
 
 body {
-  background: #f3f3ef;
+  background: var(--page-background);
   color: var(--ink);
 }
 
@@ -127,6 +129,29 @@ main {
 .command button:hover,
 .command button:focus-visible {
   background: #dfdfd8;
+}
+
+:root[data-riso-ink="Yellow Ink"],
+:root[data-riso-ink="Light Grey"] {
+  .command {
+    background: #000;
+    border: 1px solid var(--ink);
+  }
+
+  .command code {
+    color: var(--ink);
+  }
+
+  .command button {
+    background: var(--ink);
+    border-left-color: var(--ink);
+    color: #000;
+  }
+
+  .command button:hover,
+  .command button:focus-visible {
+    background: color-mix(in srgb, var(--ink), #000 15%);
+  }
 }
 
 .note {
