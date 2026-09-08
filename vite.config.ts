@@ -6,6 +6,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         home: resolve(__dirname, "index.html"),
+        installPrinters: resolve(__dirname, "install-printers.html"),
         installLaser: resolve(__dirname, "install-laser.html"),
       },
     },

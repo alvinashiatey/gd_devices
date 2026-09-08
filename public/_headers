@@ -1,0 +1,11 @@
+/scripts/install-printers.sh
+  Content-Type: text/x-shellscript; charset=utf-8
+  Content-Disposition: attachment; filename="install-printers.sh"
+  Cache-Control: no-cache
+  X-Content-Type-Options: nosniff
+
+/install
+  Content-Type: text/x-shellscript; charset=utf-8
+  Content-Disposition: attachment; filename="gd-printers-install.sh"
+  Cache-Control: no-cache
+  X-Content-Type-Options: nosniff

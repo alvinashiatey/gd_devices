@@ -1,0 +1,646 @@
+#!/bin/bash
+
+set -euo pipefail
+
+SCRIPT_VERSION="1.2.0"
+
+# ============================================================
+# CONFIGURATION
+# ============================================================
+
+# ------------------------------------------------------------
+# HP DesignJet driver
+# ------------------------------------------------------------
+
+HP_DRIVER_URL="https://ftp.hp.com/pub/softlib/software13/printers/COL39819/mac12ps/Universal_PostScript.dmg"
+
+HP_PPD="/Library/Printers/PPDs/Contents/Resources/HP Designjet Z9dr 44in.gz"
+
+# ------------------------------------------------------------
+# DesignJet printers
+# ------------------------------------------------------------
+
+DESIGNJET_1_NAME="Art_GDesignWF1"
+DESIGNJET_1_URI="ipp://10.74.0.210"
+
+DESIGNJET_2_NAME="Art_GDesignWF2"
+DESIGNJET_2_URI="ipp://10.74.0.209"
+
+# ------------------------------------------------------------
+# Kyocera laser printer
+# ------------------------------------------------------------
+LASER_NAME="Art_GDesign_Laser"
+
+LASER_URI="ipps://paperc-prd-ps4.its.yale.edu:9164/printers/artsch_gdesign_global"
+
+LASER_GUIDE_URL="https://gd-devices.pages.dev/install-laser"
+
+# Current Kyocera Mac Print Driver 6.2.
+#
+# NOTE:
+# Kyocera presents a software license agreement before downloading
+# the driver. Confirm this URL/package is appropriate for your
+# institutional deployment before rolling it out broadly.
+
+KYOCERA_DRIVER_URL="https://www.kyoceradocumentsolutions.us/content/dam/download-center-americas-cf/us/drivers/drivers/7054_Series_Mac_8_9814_dmg.download.dmg"
+# ============================================================
+# OUTPUT HELPERS
+# ============================================================
+
+# Keep redirected output plain, and honor the standard NO_COLOR opt-out.
+if [[ -t 1 && -z "${NO_COLOR:-}" && "${TERM:-}" != "dumb" ]]; then
+  BLUE=$'\033[34m'
+  GREEN=$'\033[32m'
+  YELLOW=$'\033[33m'
+  RED=$'\033[31m'
+  BOLD=$'\033[1m'
+  RESET=$'\033[0m'
+else
+  BLUE=""
+  GREEN=""
+  YELLOW=""
+  RED=""
+  BOLD=""
+  RESET=""
+fi
+
+section() {
+  printf '\n%s%s== %s ==%s\n' "$BOLD" "$BLUE" "$1" "$RESET"
+}
+
+info() {
+  printf '%s[•]%s %s\n' "$BLUE" "$RESET" "$1"
+}
+
+success() {
+  printf '%s[✓]%s %s\n' "$GREEN" "$RESET" "$1"
+}
+
+warn() {
+  printf '%s[!]%s %s\n' "$YELLOW" "$RESET" "$1"
+}
+
+detail() {
+  printf '    %s\n' "$1"
+}
+
+die() {
+  printf '\n%s[error]%s %s\n' "$RED" "$RESET" "$1" >&2
+  exit 1
+}
+
+# ============================================================
+# REQUIRE ROOT
+# ============================================================
+
+if [[ "$EUID" -ne 0 ]]; then
+  die "This script must be run as root. Use: sudo $0"
+fi
+
+# ============================================================
+# GENERIC DMG + PKG INSTALLER
+# ============================================================
+
+download_and_install_dmg() (
+
+  set -euo pipefail
+
+  local driver_name="$1"
+  local driver_url="$2"
+
+  local temp_dir
+  local dmg_path
+  local mount_point
+  local pkg_path=""
+
+  temp_dir="$(mktemp -d /tmp/printer_driver.XXXXXX)"
+  dmg_path="${temp_dir}/driver.dmg"
+  mount_point="${temp_dir}/mount"
+
+  mkdir -p "$mount_point"
+
+  cleanup() {
+
+    if /usr/bin/mount | /usr/bin/grep -q "on ${mount_point} "; then
+      /usr/bin/hdiutil detach "$mount_point" -quiet 2>/dev/null || true
+    fi
+
+    rm -rf "$temp_dir"
+  }
+
+  trap cleanup EXIT
+
+  section "$driver_name"
+  info "Downloading driver…"
+
+  /usr/bin/curl \
+    --fail \
+    --location \
+    --retry 3 \
+    --retry-delay 2 \
+    --output "$dmg_path" \
+    "$driver_url"
+
+  info "Verifying disk image…"
+
+  /usr/bin/hdiutil verify "$dmg_path"
+
+  info "Mounting disk image…"
+
+  /usr/bin/hdiutil attach \
+    "$dmg_path" \
+    -nobrowse \
+    -readonly \
+    -mountpoint "$mount_point" \
+    -quiet
+
+  info "Finding installer package…"
+
+  pkg_path="$(
+    /usr/bin/find "$mount_point" \
+      \( -name "*.pkg" -o -name "*.mpkg" \) \
+      -print \
+      | /usr/bin/head -n 1
+  )"
+
+  if [[ -z "$pkg_path" ]]; then
+    die "No .pkg or .mpkg installer found in $driver_name DMG."
+  fi
+
+  detail "Package: $pkg_path"
+  info "Installing driver…"
+
+  /usr/sbin/installer \
+    -pkg "$pkg_path" \
+    -target /
+
+  success "$driver_name installed."
+
+)
+
+# ============================================================
+# HP DRIVER
+# ============================================================
+
+ensure_hp_driver() {
+
+  if [[ -f "$HP_PPD" ]]; then
+    success "HP DesignJet driver is installed."
+    detail "$HP_PPD"
+    return
+  fi
+
+  info "HP DesignJet driver not found; installing."
+
+  download_and_install_dmg \
+    "HP DesignJet PostScript Driver" \
+    "$HP_DRIVER_URL"
+
+  if [[ ! -f "$HP_PPD" ]]; then
+    warn "Expected PPD not found. Available Z9-related PPDs:"
+    /usr/bin/find \
+      "/Library/Printers/PPDs/Contents/Resources" \
+      -iname "*Z9*" \
+      -print 2>/dev/null || true
+
+    die "HP installation completed, but the expected Z9dr PPD was not found."
+  fi
+
+  success "HP DesignJet driver is ready."
+}
+
+# ============================================================
+# KYOCERA DRIVER
+#
+# Rather than relying on a hard-coded PPD filename, ask CUPS
+# which installed models are available.
+# ============================================================
+
+get_kyocera_ppd() {
+
+  /usr/bin/find \
+    "/Library/Printers/PPDs/Contents/Resources" \
+    -type f \
+    \( \
+    -iname "*4054ci*.gz" \
+    -o -iname "*4054ci*.ppd" \
+    -o -iname "*4054ci*.PPD" \
+    \) \
+    -print 2>/dev/null \
+    | /usr/bin/head -n 1
+}
+
+ensure_kyocera_driver() {
+
+  local kyocera_ppd
+
+  kyocera_ppd="$(get_kyocera_ppd)"
+
+  if [[ -n "$kyocera_ppd" && -f "$kyocera_ppd" ]]; then
+    success "Kyocera TASKalfa 4054ci driver is installed."
+    detail "$kyocera_ppd"
+    return
+  fi
+
+  info "Kyocera TASKalfa 4054ci driver not found; installing."
+
+  download_and_install_dmg \
+    "Kyocera Mac Print Driver" \
+    "$KYOCERA_DRIVER_URL"
+
+  # Search again after installation
+  kyocera_ppd="$(get_kyocera_ppd)"
+
+  if [[ -z "$kyocera_ppd" || ! -f "$kyocera_ppd" ]]; then
+    warn "TASKalfa 4054ci PPD not found. Available Kyocera PPDs:"
+    /usr/bin/find \
+      "/Library/Printers/PPDs/Contents/Resources" \
+      -type f \
+      -iname "*Kyocera*" \
+      -print 2>/dev/null || true
+
+    die "Could not locate the Kyocera TASKalfa 4054ci PPD."
+  fi
+
+  success "Kyocera driver is ready."
+  detail "$kyocera_ppd"
+}
+
+# ============================================================
+# PRINTER QUEUE HELPERS
+# ============================================================
+
+printer_exists() {
+
+  local printer="$1"
+
+  /usr/bin/lpstat -p "$printer" >/dev/null 2>&1
+}
+
+get_printer_uri() {
+
+  local printer="$1"
+
+  /usr/bin/lpstat -v "$printer" 2>/dev/null \
+    | /usr/bin/sed 's/^device for .*: //'
+}
+
+normalize_uri() {
+
+  local uri="$1"
+
+  echo "${uri%/}"
+}
+
+get_installed_driver_name() {
+
+  local printer="$1"
+  local installed_ppd="/etc/cups/ppd/${printer}.ppd"
+
+  if [[ ! -f "$installed_ppd" ]]; then
+    return 1
+  fi
+
+  /usr/bin/grep '^\*NickName:' "$installed_ppd" \
+    | /usr/bin/head -n 1 \
+    | /usr/bin/sed \
+      's/^\*NickName:[[:space:]]*//; s/^"//; s/"$//' || true
+}
+
+# ============================================================
+# HP DRIVER NICKNAME
+# ============================================================
+
+get_hp_driver_name() {
+
+  if [[ "$HP_PPD" == *.gz ]]; then
+
+    /usr/bin/gzip -dc "$HP_PPD" \
+      | /usr/bin/grep '^\*NickName:' \
+      | /usr/bin/head -n 1 \
+      | /usr/bin/sed \
+        's/^\*NickName:[[:space:]]*//; s/^"//; s/"$//' || true
+
+  else
+
+    /usr/bin/grep '^\*NickName:' "$HP_PPD" \
+      | /usr/bin/head -n 1 \
+      | /usr/bin/sed \
+        's/^\*NickName:[[:space:]]*//; s/^"//; s/"$//' || true
+  fi
+}
+
+# ============================================================
+# CHECK DESIGNJET QUEUE
+# ============================================================
+
+designjet_is_correct() {
+
+  local printer="$1"
+  local expected_uri="$2"
+
+  local current_uri
+  local current_driver
+  local expected_driver
+
+  if ! printer_exists "$printer"; then
+    info "Queue not found."
+    return 1
+  fi
+
+  current_uri="$(get_printer_uri "$printer")"
+  current_driver="$(get_installed_driver_name "$printer" || true)"
+  expected_driver="$(get_hp_driver_name)"
+
+  if [[ "$(normalize_uri "$current_uri")" != "$(normalize_uri "$expected_uri")" ]]; then
+    warn "Queue URI differs."
+    detail "Current:  $current_uri"
+    detail "Expected: $expected_uri"
+    return 1
+  fi
+
+  if [[ "$current_driver" != "$expected_driver" ]]; then
+    warn "Queue driver differs."
+    detail "Current:  $current_driver"
+    detail "Expected: $expected_driver"
+    return 1
+  fi
+
+  return 0
+}
+
+# ============================================================
+# CONFIGURE DESIGNJET
+# ============================================================
+
+configure_designjet() {
+
+  local printer="$1"
+  local uri="$2"
+
+  section "$printer"
+
+  if designjet_is_correct "$printer" "$uri"; then
+    success "Queue is already configured."
+    return
+  fi
+
+  if printer_exists "$printer"; then
+    info "Removing existing queue…"
+    /usr/sbin/lpadmin -x "$printer"
+  fi
+
+  info "Creating queue…"
+
+  /usr/sbin/lpadmin \
+    -p "$printer" \
+    -E \
+    -v "$uri" \
+    -P "$HP_PPD" \
+    -D "$printer" \
+    -o printer-is-shared=false
+
+  /usr/sbin/cupsenable "$printer"
+  /usr/sbin/cupsaccept "$printer"
+
+  if ! designjet_is_correct "$printer" "$uri"; then
+    die "$printer failed verification."
+  fi
+
+  success "Queue configured."
+}
+
+# ============================================================
+# CHECK LASER QUEUE
+# ============================================================
+
+laser_is_correct() {
+
+  local printer="$1"
+  local expected_uri="$2"
+
+  local current_uri
+  local current_driver
+  local driver_lower
+
+  if ! printer_exists "$printer"; then
+    info "Queue not found."
+    return 1
+  fi
+
+  current_uri="$(get_printer_uri "$printer")"
+  current_driver="$(get_installed_driver_name "$printer" || true)"
+
+  if [[ "$(normalize_uri "$current_uri")" != "$(normalize_uri "$expected_uri")" ]]; then
+    warn "Queue URI differs."
+    detail "Current:  $current_uri"
+    detail "Expected: $expected_uri"
+    return 1
+  fi
+
+  driver_lower="$(
+    echo "$current_driver" \
+      | /usr/bin/tr '[:upper:]' '[:lower:]'
+  )"
+
+  if [[ "$driver_lower" != *"4054ci"* ]]; then
+    warn "Queue driver differs."
+    detail "Current:  $current_driver"
+    detail "Expected: Kyocera TASKalfa 4054ci"
+    return 1
+  fi
+
+  return 0
+}
+
+# ============================================================
+# ENABLE KYOCERA CASSETTE 3 + 4
+#
+# The exact CUPS option name can change between Kyocera
+# driver versions, so discover it from the installed queue PPD.
+# ============================================================
+
+enable_kyocera_cassettes() {
+
+  local printer="$1"
+  local queue_ppd="/etc/cups/ppd/${printer}.ppd"
+
+  local cassette_setting
+  local option_name
+  local option_value
+
+  if [[ ! -f "$queue_ppd" ]]; then
+    warn "Queue PPD not found; enable Cassettes 3 and 4 manually."
+    return
+  fi
+
+  cassette_setting="$(
+    /usr/bin/awk '
+            tolower($0) ~ /cassette[^:]*3[^:]*4/ &&
+            $1 ~ /^\*/ &&
+            $2 ~ /\// {
+
+                option = $1
+                sub(/^\*/, "", option)
+
+                value = $2
+                sub(/\/.*/, "", value)
+
+                print option " " value
+                exit
+            }
+        ' "$queue_ppd"
+  )"
+
+  if [[ -z "$cassette_setting" ]]; then
+    warn "Could not identify the Cassette 3/4 driver option."
+    detail "Enable it in Printers & Scanners → $printer → Options & Supplies."
+    return
+  fi
+
+  option_name="${cassette_setting%% *}"
+  option_value="${cassette_setting#* }"
+
+  info "Enabling Cassettes 3 and 4 (${option_name}=${option_value})…"
+
+  /usr/sbin/lpadmin \
+    -p "$printer" \
+    -o "${option_name}=${option_value}"
+}
+
+# ============================================================
+# CONFIGURE LASER PRINTER
+# ============================================================
+
+configure_laser() {
+
+  local kyocera_ppd
+
+  section "$LASER_NAME"
+
+  if laser_is_correct "$LASER_NAME" "$LASER_URI"; then
+    success "Queue is already configured."
+    return
+  fi
+
+  kyocera_ppd="$(get_kyocera_ppd)"
+
+  if [[ -z "$kyocera_ppd" || ! -f "$kyocera_ppd" ]]; then
+    die "Kyocera TASKalfa 4054ci PPD is unavailable."
+  fi
+
+  if printer_exists "$LASER_NAME"; then
+    info "Removing existing queue…"
+    /usr/sbin/lpadmin -x "$LASER_NAME"
+  fi
+
+  info "Creating queue…"
+  detail "URI: $LASER_URI"
+  detail "Driver: $kyocera_ppd"
+
+  /usr/sbin/lpadmin \
+    -p "$LASER_NAME" \
+    -E \
+    -v "$LASER_URI" \
+    -P "$kyocera_ppd" \
+    -D "$LASER_NAME" \
+    -o printer-is-shared=false
+
+  /usr/sbin/cupsenable "$LASER_NAME"
+  /usr/sbin/cupsaccept "$LASER_NAME"
+
+  # Configure installed options
+  enable_kyocera_cassettes "$LASER_NAME"
+
+  # Verify result
+  if ! laser_is_correct "$LASER_NAME" "$LASER_URI"; then
+    warn "Current queue details:"
+    /usr/bin/lpstat -v "$LASER_NAME" || true
+    die "$LASER_NAME failed verification."
+  fi
+
+  success "Queue configured."
+}
+
+# ============================================================
+# PAPERCUT NOTICE
+# ============================================================
+
+papercut_notice() {
+
+  section "PaperCut required"
+  warn "PaperCut is required for laser printing and print release."
+  detail "Install guide: $LASER_GUIDE_URL"
+
+  # Best-effort macOS GUI notice.
+  # The terminal message above remains the primary notice.
+
+  /usr/bin/osascript <<EOF >/dev/null 2>&1 || true
+display dialog "The Graphic Design laser printers require PaperCut for authentication and print release.
+
+Please make sure PaperCut is installed.
+
+Instructions:
+${LASER_GUIDE_URL}" buttons {"OK"} default button "OK" with title "PaperCut Required" with icon caution
+EOF
+}
+
+# ============================================================
+# MAIN
+# ============================================================
+
+section "Yale Graphic Design Printer Setup"
+detail "Version $SCRIPT_VERSION"
+
+# ------------------------------------------------------------
+# Install/check drivers
+# ------------------------------------------------------------
+
+ensure_hp_driver
+
+ensure_kyocera_driver
+
+# ------------------------------------------------------------
+# DesignJets
+# ------------------------------------------------------------
+
+configure_designjet \
+  "$DESIGNJET_1_NAME" \
+  "$DESIGNJET_1_URI"
+
+configure_designjet \
+  "$DESIGNJET_2_NAME" \
+  "$DESIGNJET_2_URI"
+
+# ------------------------------------------------------------
+# Laser printer
+# ------------------------------------------------------------
+
+configure_laser
+
+# ------------------------------------------------------------
+# Final status
+# ------------------------------------------------------------
+
+section "Setup complete"
+
+for printer in \
+  "$DESIGNJET_1_NAME" \
+  "$DESIGNJET_2_NAME" \
+  "$LASER_NAME"; do
+
+  if printer_exists "$printer"; then
+
+    success "$printer"
+    /usr/bin/lpstat -v "$printer"
+  fi
+
+done
+
+# ------------------------------------------------------------
+# PaperCut reminder
+# ------------------------------------------------------------
+
+papercut_notice
+
+exit 0

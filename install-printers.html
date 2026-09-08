@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/images/laser.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Install all Yale Graphic Design printers on macOS."
+    />
+    <title>Install GD Printers · Yale Graphic Design</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="wordmark" href="/">Printer guide</a>
+      <a class="back-link" href="/">← Printer status</a>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <p class="eyebrow">macOS · Installer version 1.2.0</p>
+        <h1 id="page-title">Install all GD printers</h1>
+        <p class="lede">
+          Install both DesignJets and the laser printer with one guided setup.
+          Connect to <strong>Yale Secure</strong> or the Yale VPN before you
+          begin.
+        </p>
+        <div class="requirements" aria-label="Requirements">
+          <span>macOS</span>
+          <span>Yale network or VPN</span>
+          <span>Administrator password</span>
+        </div>
+        <a
+          class="download-button"
+          href="/scripts/install-printers.sh"
+          download="install-printers.sh"
+          >Download installer</a
+        >
+      </section>
+
+      <div class="guide-layout">
+        <aside class="guide-aside">
+          <p class="aside-label">Before running</p>
+          <p>
+            The installer downloads HP and Kyocera drivers, adds three printer
+            queues, and replaces existing queues with the same names.
+          </p>
+          <nav aria-label="Related instructions">
+            <a href="/scripts/install-printers.sh">View installer source</a>
+            <a href="/install-laser.html">PaperCut instructions</a>
+          </nav>
+        </aside>
+
+        <article class="steps">
+          <header class="group-header">
+            <span>01</span>
+            <div>
+              <p>Terminal</p>
+              <h2>Run one command</h2>
+            </div>
+          </header>
+
+          <ol class="step-list">
+            <li>
+              <div class="step-number">1</div>
+              <div>
+                <h3>Open Terminal and run the installer</h3>
+                <p>
+                  Open <strong>Applications → Utilities → Terminal</strong>,
+                  paste this command, and press Return.
+                </p>
+                <div class="command">
+                  <code>curl -fsSL https://gd-devices.pages.dev/scripts/install-printers.sh -o /tmp/gd-printers.sh &amp;&amp; sudo bash /tmp/gd-printers.sh</code>
+                  <button type="button" data-copy="curl -fsSL https://gd-devices.pages.dev/scripts/install-printers.sh -o /tmp/gd-printers.sh &amp;&amp; sudo bash /tmp/gd-printers.sh">Copy</button>
+                </div>
+                <div class="note">
+                  Enter your Mac administrator password when prompted. Terminal
+                  will not display dots or characters while you type it.
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="step-number">2</div>
+              <div>
+                <h3>Complete PaperCut setup</h3>
+                <p>
+                  Laser printing requires PaperCut for authentication and print
+                  release. Follow the
+                  <a href="/install-laser.html">PaperCut instructions</a> after
+                  the installer finishes.
+                </p>
+              </div>
+            </li>
+          </ol>
+
+          <section class="support">
+            <p class="aside-label">Need help?</p>
+            <h2>Installation did not finish?</h2>
+            <p>
+              Confirm that you are connected to Yale Secure or the Yale VPN,
+              then try again. For assistance, email
+              <a href="mailto:alvin.ashiatey@yale.edu">Alvin</a>.
+            </p>
+          </section>
+        </article>
+      </div>
+    </main>
+
+    <script type="module" src="/src/install-printers.ts"></script>
+  </body>
+</html>
